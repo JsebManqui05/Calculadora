@@ -4,7 +4,7 @@ from src.operaciones import calcular
 
 def lanzar_gui():
     ctk.set_appearance_mode("System")
-    ctk.set_default_color_theme("blue")
+    ctk.set_default_color_theme("green")
 
     app = ctk.CTk()
     app.title("Calculadora")
