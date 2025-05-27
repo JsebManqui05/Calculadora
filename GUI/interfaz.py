@@ -1,55 +1,60 @@
-# Importa el módulo CustomTkinter y messagebox de tkinter
 import customtkinter as ctk
 from tkinter import messagebox
-# Importa la función calcular desde src/operaciones.py
-from src.operaciones import calcular # Importa la lógica de cálculo
+from src.operaciones import calcular  # Lógica de cálculo
 
-# Función que lanza la interfaz gráfica
+
 def lanzar_gui():
-    # Modo visual: puede ser "Light", "Dark" o seguir la configuración del sistema
+    # Apariencia
     ctk.set_appearance_mode("System")
-        
-    # Establece el color principal del tema: "green", "blue", "dark-blue"
     ctk.set_default_color_theme("green")
 
-    # Crea la ventana principal de la aplicación
     app = ctk.CTk()
-    app.title("Calculadora") # Título de la ventana
-    app.geometry("400x350") # Tamaño inicial (ancho x alto)
+    app.title("Calculadora")
+    app.geometry("400x400")
 
-    # Función que se ejecuta al presionar "Calcular"
+    # Variable para guardar la operación seleccionada
+    operacion_actual = {"valor": "+"}
+
+    # Función para actualizar la operación al hacer clic en un botón
+    def seleccionar_operacion(op):
+        operacion_actual["valor"] = op
+        operacion_label.configure(text=f"Operación seleccionada: {op}")
+
+    # Función que se ejecuta al presionar "="
     def on_calcular():
         try:
-            # Toma los valores ingresados y ejecuta la lógica
-            resultado = calcular(entry1.get(), entry2.get(), operacion.get())
-
-            # Muestra el resultado en la etiqueta
+            resultado = calcular(entry1.get(), entry2.get(), operacion_actual["valor"])
             resultado_label.configure(text=f"Resultado: {resultado}")
-
-        # Si ocurre un error (como dividir por cero), muestra una alerta
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
-    # Título en la parte superior
+    # Título
     ctk.CTkLabel(app, text="Calculadora", font=ctk.CTkFont(size=24, weight="bold")).pack(pady=10)
 
-    # Primer campo de entrada
+    # Primer número
     entry1 = ctk.CTkEntry(app, placeholder_text="Primer número")
     entry1.pack(pady=10)
 
-    # Menú desplegable para elegir la operación (+, -, *, /)
-    operacion = ctk.CTkComboBox(app, values=["+", "-", "*", "/"])
-    operacion.set("+")
-    operacion.pack(pady=10)
+    # frame para los botones de operación
+    frame_botones = ctk.CTkFrame(app)
+    frame_botones.pack(pady=10)
 
-    # Segundo campo de entrada
+    # Crear botones de operación y asociarlos con la función de selección
+    for simbolo in ["+", "-", "*", "/"]:
+        ctk.CTkButton(frame_botones, text=simbolo, width=50, command=lambda op=simbolo: seleccionar_operacion(op)).pack(side="left", padx=5)
+
+    # Etiqueta que muestra la operación actual
+    operacion_label = ctk.CTkLabel(app, text="Operación seleccionada: +", font=ctk.CTkFont(size=14))
+    operacion_label.pack(pady=5)
+
+    # Segundo número
     entry2 = ctk.CTkEntry(app, placeholder_text="Segundo número")
     entry2.pack(pady=10)
 
-    # Botón que ejecuta el cálculo
-    ctk.CTkButton(app, text="Calcular", command=on_calcular).pack(pady=20)
+    # Botón igual "=" para ejecutar el calculo
+    ctk.CTkButton(app, text="=", command=on_calcular, width=100, height=40, font=ctk.CTkFont(size=16, weight="bold")).pack(pady=20)
 
-    # Etiqueta donde se mostrará el resultado
+    # Resultado
     resultado_label = ctk.CTkLabel(app, text="Resultado:", font=ctk.CTkFont(size=16))
     resultado_label.pack(pady=10)
 
